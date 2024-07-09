@@ -1151,7 +1151,8 @@ func (mc *ModbusClient) writeRegisters(addr uint16, values []byte) (err error) {
 	if err != nil {
 		return
 	}
-	mc.logger.Errorf("write registers response %v", res)
+
+	fmt.Printf("write registers response %v", res)
 
 	// validate the response code
 	switch {
@@ -1162,14 +1163,14 @@ func (mc *ModbusClient) writeRegisters(addr uint16, values []byte) (err error) {
 			bytesToUint16(BIG_ENDIAN, res.payload[0:2]) != addr ||
 			// bytes 3-4 should be the quantity of registers (2 bytes per register)
 			bytesToUint16(BIG_ENDIAN, res.payload[2:4]) != quantity {
-			mc.logger.Errorf("%v, %d, %d", res.payload, addr, quantity)
+			fmt.Printf("%v, %d, %d", res.payload, addr, quantity)
 			err = ErrProtocolError
 			return
 		}
 
 	case res.functionCode == (req.functionCode | 0x80):
 		if len(res.payload) != 1 {
-			mc.logger.Errorf("%v", res.payload)
+			fmt.Printf("payload %v", res.payload)
 			err = ErrProtocolError
 			return
 		}
@@ -1177,6 +1178,7 @@ func (mc *ModbusClient) writeRegisters(addr uint16, values []byte) (err error) {
 		err = mapExceptionCodeToError(res.payload[0])
 
 	default:
+		fmt.Printf("default %v", res.payload)
 		err = ErrProtocolError
 		mc.logger.Warningf("unexpected response code (%v)", res.functionCode)
 	}
