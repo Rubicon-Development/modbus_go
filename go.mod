@@ -1,4 +1,4 @@
-module github.com/Rubicon-Development/modbus_go
+module github.com/simonvetter/modbus
 
 go 1.16
 
